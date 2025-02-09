@@ -21,11 +21,10 @@ public class UndercoverTransformer implements ClassFileTransformer {
 
 		log.info("transforming " + className);
 
-		log.fine("source path is " + protectionDomain.getCodeSource().getLocation().getPath());
-
 		try {
 			return new Instrumenter().instrumentClass(classfileBuffer);
-		} catch (final IOException e) {
+		} catch (final Throwable e) {
+			log.warning("instrumentation of '" + className + "' failed: " + e);
 			throw new RuntimeException("instrumentation of '" + className + "' failed", e);
 		}
 	}

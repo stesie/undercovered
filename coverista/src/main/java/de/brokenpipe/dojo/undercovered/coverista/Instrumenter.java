@@ -1,8 +1,6 @@
 package de.brokenpipe.dojo.undercovered.coverista;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -18,20 +16,26 @@ public class Instrumenter {
 		}
 	}
 
-	public byte[] instrumentClass(final FileInputStream inputStream) throws IOException {
-		return instrumentClass(new ClassReader(inputStream));
+	public byte[] instrumentClass(final InputStream inputStream) throws IOException {
+		return instrumentClass(inputStream.readAllBytes());
 	}
 
-	public byte[] instrumentClass(final byte[] classBytes) throws IOException {
-		return instrumentClass(new ClassReader(classBytes));
-	}
+	public byte[] instrumentClass(final byte[] classBytes) {
+		// first pass: gather label information
+		final JumpLabelCollector jumpLabelCollector = new JumpLabelCollector();
+		final CoveristaClassVisitor labelCollVisitor = new CoveristaClassVisitor(null,
+				mv -> new CoveristaLabelCollectingMethodVisitor(mv, jumpLabelCollector));
+		new ClassReader(classBytes).accept(labelCollVisitor, 0);
 
-	private byte[] instrumentClass(final ClassReader reader) {
+		// second pass: instrument
+		final ClassReader reader = new ClassReader(classBytes);
 		final var writer = new ClassWriter(0);
 
-		final var classVisitor = new CoveristaClassVisitor(writer);
+		final var classVisitor = new CoveristaClassVisitor(writer,
+				mv -> new CoveristaInstrumentingMethodVisitor(mv, jumpLabelCollector.getJumpLabels()));
 		reader.accept(classVisitor, 0);
 
 		return writer.toByteArray();
 	}
+
 }
