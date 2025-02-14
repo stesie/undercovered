@@ -4,7 +4,6 @@ public class Demo {
 
 	public static void main(final String[] argv) {
 		final String greeting = "Hello World";
-		final var i = 3;
 
 		bla(greeting);
 		bla("to the blarg");

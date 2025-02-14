@@ -1,6 +1,5 @@
 package de.brokenpipe.dojo.undercovered.coverista;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 

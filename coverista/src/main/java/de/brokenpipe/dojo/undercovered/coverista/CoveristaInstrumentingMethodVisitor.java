@@ -11,11 +11,15 @@ import org.objectweb.asm.Opcodes;
 public class CoveristaInstrumentingMethodVisitor extends MethodVisitor {
 
 	private final Set<Integer> jumpLabels;
+	private final String className;
+
 	private Integer currentLineNumber = null;
 
-	public CoveristaInstrumentingMethodVisitor(final MethodVisitor methodVisitor, final Set<Integer> jumpLabels) {
+	public CoveristaInstrumentingMethodVisitor(final MethodVisitor methodVisitor, final Set<Integer> jumpLabels,
+			final String className) {
 		super(Opcodes.ASM9, methodVisitor);
 		this.jumpLabels = jumpLabels;
+		this.className = className;
 	}
 
 	@Override
@@ -29,7 +33,8 @@ public class CoveristaInstrumentingMethodVisitor extends MethodVisitor {
 	}
 
 	@Override
-	public void visitFrame(final int type, final int numLocal, final Object[] local, final int numStack, final Object[] stack) {
+	public void visitFrame(final int type, final int numLocal, final Object[] local, final int numStack,
+			final Object[] stack) {
 		super.visitFrame(type, numLocal, local, numStack, stack);
 
 		if (jumpLabels.contains(currentLineNumber)) {
@@ -37,10 +42,17 @@ public class CoveristaInstrumentingMethodVisitor extends MethodVisitor {
 		}
 	}
 
+	@Override
+	public void visitMaxs(final int maxStack, final int maxLocals) {
+		super.visitMaxs(maxStack + 2, maxLocals);
+	}
+
 	private void instrument(final Integer line) {
 		log.finer("instrument line: " + line);
+		super.visitLdcInsn(className);
 		push(line);
-		super.visitMethodInsn(Opcodes.INVOKESTATIC, "de/brokenpipe/dojo/undercovered/coverista/Tracker", "track", "(I)V", false);
+		super.visitMethodInsn(Opcodes.INVOKESTATIC, "de/brokenpipe/dojo/undercovered/coverista/Tracker", "track",
+				"(Ljava/lang/String;I)V", false);
 	}
 
 	private void push(final Integer value) {
