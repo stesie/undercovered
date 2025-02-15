@@ -6,12 +6,12 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 @Log
-public class CoveristaLabelCollectingMethodVisitor extends MethodVisitor {
+public class LabelCollectingMethodVisitor extends MethodVisitor {
 
 	private final JumpLabelCollector jumpLabelCollector;
 	private Integer lastLineNumber = null;
 
-	public CoveristaLabelCollectingMethodVisitor(final MethodVisitor methodVisitor,
+	public LabelCollectingMethodVisitor(final MethodVisitor methodVisitor,
 			final JumpLabelCollector jumpLabelCollector) {
 		super(Opcodes.ASM9, methodVisitor);
 		this.jumpLabelCollector = jumpLabelCollector;

@@ -8,14 +8,14 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 @Log
-public class CoveristaInstrumentingMethodVisitor extends MethodVisitor {
+public class InstrumentingMethodVisitor extends MethodVisitor {
 
 	private final Set<Integer> jumpLabels;
 	private final String className;
 
 	private Integer currentLineNumber = null;
 
-	public CoveristaInstrumentingMethodVisitor(final MethodVisitor methodVisitor, final Set<Integer> jumpLabels,
+	public InstrumentingMethodVisitor(final MethodVisitor methodVisitor, final Set<Integer> jumpLabels,
 			final String className) {
 		super(Opcodes.ASM9, methodVisitor);
 		this.jumpLabels = jumpLabels;
@@ -51,8 +51,8 @@ public class CoveristaInstrumentingMethodVisitor extends MethodVisitor {
 		log.finer("instrument line: " + line);
 		super.visitLdcInsn(className);
 		push(line);
-		super.visitMethodInsn(Opcodes.INVOKESTATIC, "de/brokenpipe/dojo/undercovered/coverista/Tracker", "track",
-				"(Ljava/lang/String;I)V", false);
+		super.visitMethodInsn(Opcodes.INVOKESTATIC, "de/brokenpipe/dojo/undercovered/coverista/tracking/Tracker",
+				"track", "(Ljava/lang/String;I)V", false);
 	}
 
 	private void push(final Integer value) {

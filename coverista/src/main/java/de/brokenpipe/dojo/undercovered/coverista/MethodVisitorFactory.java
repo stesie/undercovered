@@ -5,6 +5,6 @@ import org.objectweb.asm.MethodVisitor;
 @FunctionalInterface
 public interface MethodVisitorFactory {
 
-	MethodVisitor apply(String className, String methodName, MethodVisitor methodVisitor);
+	MethodVisitor apply(String className, String methodName, String descriptor, MethodVisitor methodVisitor);
 
 }

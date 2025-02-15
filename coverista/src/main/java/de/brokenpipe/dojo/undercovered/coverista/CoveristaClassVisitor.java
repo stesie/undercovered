@@ -28,8 +28,8 @@ public class CoveristaClassVisitor extends ClassVisitor {
 	@Override
 	public MethodVisitor visitMethod(final int access, final String name, final String descriptor,
 			final String signature, final String[] exceptions) {
-		log.fine("visitMethod: " + name);
-		return methodVisitorFactory.apply(className, name,
+		log.fine("visitMethod: " + name + ", descriptor: " + descriptor + ", signature: " + signature);
+		return methodVisitorFactory.apply(className, name, descriptor,
 				super.visitMethod(access, name, descriptor, signature, exceptions));
 	}
 }
