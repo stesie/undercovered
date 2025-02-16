@@ -19,13 +19,28 @@ public class UndercoverTransformer implements ClassFileTransformer {
 	@Override
 	public byte[] transform(final Module module, final ClassLoader loader, final String className,
 			final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
-		if (className.startsWith("java/") || className.startsWith("sun/") || className.startsWith("jdk/internal")
+		if (className.startsWith("java/")
+				|| className.startsWith("javax/")
+				|| className.startsWith("jdk/")
+				|| className.startsWith("sun/")
 				|| className.startsWith("de/brokenpipe/dojo/undercovered/coverista/")) {
 			log.fine("*not* instrumenting class " + className);
 			return classfileBuffer;
 		}
 
-		log.info("transforming " + className);
+		if (loader == null) {
+			log.warning("class loader is null, not instrumenting " + className);
+			return classfileBuffer;
+		}
+
+		try {
+			loader.loadClass("de.brokenpipe.dojo.undercovered.coverista.tracking.Tracker");
+		} catch (final ClassNotFoundException e) {
+			log.warning("class loader does not know about our Tracker, not instrumenting " + className);
+			return classfileBuffer;
+		}
+
+		log.info("transforming " + className + ", module: " + module + ", loader: " + loader);
 
 		try {
 			return new Instrumenter(collector).instrumentClass(classfileBuffer);
