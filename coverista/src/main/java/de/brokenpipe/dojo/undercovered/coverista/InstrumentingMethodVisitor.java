@@ -1,5 +1,7 @@
 package de.brokenpipe.dojo.undercovered.coverista;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import lombok.extern.java.Log;
@@ -14,6 +16,8 @@ public class InstrumentingMethodVisitor extends MethodVisitor {
 	private final String className;
 
 	private Integer currentLineNumber = null;
+	private Label currentLabel = null;
+	private Map<Label, Label> surrogateLabels = new HashMap<>();
 
 	public InstrumentingMethodVisitor(final MethodVisitor methodVisitor, final Set<Integer> jumpLabels,
 			final String className) {
@@ -35,11 +39,35 @@ public class InstrumentingMethodVisitor extends MethodVisitor {
 	@Override
 	public void visitFrame(final int type, final int numLocal, final Object[] local, final int numStack,
 			final Object[] stack) {
+		for (int i = 0; i < numStack; i ++) {
+			if (stack[i] instanceof Label && surrogateLabels.containsKey(stack[i])) {
+				log.finer("applying surrogate label: " + stack[1]);
+				stack[i] = surrogateLabels.get(stack[i]);
+			}
+		}
+
 		super.visitFrame(type, numLocal, local, numStack, stack);
 
 		if (jumpLabels.contains(currentLineNumber)) {
 			instrument(currentLineNumber);
 		}
+	}
+
+	@Override
+	public void visitLabel(final Label label) {
+		super.visitLabel(label);
+		currentLabel = label;
+	}
+
+	@Override
+	public void visitTypeInsn(final int opcode, final String type) {
+		if (opcode == Opcodes.NEW) {
+			final var surrogateLabel = new Label();
+			super.visitLabel(surrogateLabel);
+			surrogateLabels.put(currentLabel, surrogateLabel);
+		}
+
+		super.visitTypeInsn(opcode, type);
 	}
 
 	@Override
