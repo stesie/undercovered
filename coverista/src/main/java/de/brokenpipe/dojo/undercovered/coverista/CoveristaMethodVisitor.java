@@ -18,17 +18,7 @@ public class CoveristaMethodVisitor extends MethodVisitor {
 		log.finer("instrument line: " + line);
 		super.visitLineNumber(line, start);
 
-		push(line);
-		super.visitMethodInsn(Opcodes.INVOKESTATIC, "de/brokenpipe/dojo/undercovered/coverista/Tracker", "track", "(I)V", false);
+		super.visitMethodInsn(Opcodes.INVOKESTATIC, "de/brokenpipe/dojo/undercovered/coverista/Tracker", "track", "()V", false);
 	}
 
-	private void push(final int value) {
-		if (value <= Byte.MAX_VALUE) {
-			super.visitIntInsn(Opcodes.BIPUSH, value);
-		} else if (value <= Short.MAX_VALUE) {
-			super.visitIntInsn(Opcodes.SIPUSH, value);
-		} else {
-			super.visitLdcInsn(Integer.valueOf(value));
-		}
-	}
 }

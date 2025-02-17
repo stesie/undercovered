@@ -5,8 +5,9 @@ import lombok.extern.java.Log;
 @Log
 public class Tracker {
 
-	public static void track(final int line) {
-		final var callingClass = Thread.currentThread().getStackTrace()[2].getClassName();
-		log.finer("hit " + callingClass + ":" + line);
+	public static void track() {
+		final StackTraceElement element = Thread.currentThread().getStackTrace()[2];
+		final String callingClass = element.getClassName();
+		log.finer("hit " + callingClass + ":" + element.getLineNumber());
 	}
 }
