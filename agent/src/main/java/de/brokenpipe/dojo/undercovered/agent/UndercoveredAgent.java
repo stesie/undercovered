@@ -8,12 +8,7 @@ import lombok.extern.java.Log;
 public class UndercoveredAgent {
 
 	public static void premain(final String agentArgs, final Instrumentation inst) {
-
 		log.info("[Agent] In premain method");
 		inst.addTransformer(new UndercoverTransformer());
-
-		Runtime.getRuntime().addShutdownHook(
-				new Thread(() -> System.out.println("In the middle of a shutdown"))
-		);
 	}
 }
