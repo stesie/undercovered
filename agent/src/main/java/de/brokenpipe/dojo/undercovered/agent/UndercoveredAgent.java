@@ -47,6 +47,10 @@ public class UndercoveredAgent {
 
 	private record AgentArgs(String destfile, Set<String> includes, Set<String> excludes) {
 		public static AgentArgs fromString(final String agentArgs) {
+			if (agentArgs == null) {
+				return new AgentArgs(null, Set.of(), Set.of());
+			}
+
 			final Map<String, String> argsMap = Arrays.stream(agentArgs.split(","))
 					.map(s -> s.split("="))
 					.collect(Collectors.toMap(a -> a[0], a -> a[1]));
