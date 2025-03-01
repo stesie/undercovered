@@ -16,7 +16,7 @@ public class UndercoveredAgent {
 
 	public static void premain(final String agentArgs, final Instrumentation inst) {
 
-		log.info("[Agent] In premain method, agentArgs: " + agentArgs);
+		log.fine("[Agent] In premain method, agentArgs: " + agentArgs);
 		final var args = AgentArgs.fromString(agentArgs);
 
 		final var collector = Tracker.createCollector(args.includes, args.excludes);
@@ -26,7 +26,6 @@ public class UndercoveredAgent {
 
 		Runtime.getRuntime().addShutdownHook(
 				new Thread(() -> {
-					System.out.println("In the middle of a shutdown");
 					inst.removeTransformer(transformer);
 
 					if (args.destfile != null) {

@@ -40,7 +40,7 @@ public class UndercoverTransformer implements ClassFileTransformer {
 			return classfileBuffer;
 		}
 
-		log.info("transforming " + className + ", module: " + module + ", loader: " + loader);
+		log.fine("transforming " + className + ", module: " + module + ", loader: " + loader);
 
 		try {
 			return new Instrumenter(collector).instrumentClass(classfileBuffer);
