@@ -7,6 +7,9 @@ code in production.
 
 This is a simple project to learn how to write a Code Coverage Collector for Java.
 
+I've also published a series of articles on the topic here:
+https://stefansiegl.de/2025/02/lets-create-a-coverage-analyzer-part-1/
+
 It uses the Java Agent API to register bytecode instrumentation to collect code coverage data.
 
 Currently it only collects line coverage data. It does not bother to collect branch coverage data.
